@@ -47,6 +47,9 @@ export default class Column extends Component {
   onVisibilityChange = ({ id: visibility_type }) =>
     this.updateField({ visibility_type });
 
+  onPositionChange = event =>
+    this.updateProperty("position", Number(event.target.value));
+
   render() {
     const { field, idfields } = this.props;
 
@@ -76,6 +79,14 @@ export default class Column extends Component {
                     field={field}
                     updateField={this.updateField}
                     idfields={idfields}
+                  />
+                </div>
+                <div>
+                <InputBlurChange
+                    className="flex-full px1"
+                    type="text"
+                    value={this.props.field.position.toString()}
+                    onBlurChange={this.onPositionChange}
                   />
                 </div>
               </div>

@@ -67,7 +67,7 @@
 (api/defendpoint PUT "/:id"
   "Update `Field` with ID."
   [id :as {{:keys [caveats description display_name fk_target_field_id points_of_interest special_type
-                   visibility_type has_field_values settings]
+                   visibility_type has_field_values settings position]
             :as body} :body}]
   {caveats            (s/maybe su/NonBlankString)
    description        (s/maybe su/NonBlankString)
@@ -77,7 +77,8 @@
    special_type       (s/maybe FieldType)
    visibility_type    (s/maybe FieldVisibilityType)
    has_field_values   (s/maybe (apply s/enum (map name field/has-field-values-options)))
-   settings           (s/maybe su/Map)}
+   settings           (s/maybe su/Map)
+   position           (s/maybe su/IntGreaterThanZero)}
   (let [field              (hydrate (api/write-check Field id) :dimensions)
         new-special-type   (keyword (get body :special_type (:special_type field)))
         removed-fk?        (removed-fk-special-type? (:special_type field) new-special-type)
@@ -99,7 +100,7 @@
         (db/update! Field id
           (u/select-keys-when (assoc body :fk_target_field_id (when-not removed-fk? fk-target-field-id))
             :present #{:caveats :description :fk_target_field_id :points_of_interest :special_type :visibility_type
-                       :has_field_values}
+                       :has_field_values :position}
             :non-nil #{:display_name :settings})))))
     ;; return updated field
     (hydrate (Field id) :dimensions)))
