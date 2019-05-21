@@ -78,7 +78,7 @@
    visibility_type    (s/maybe FieldVisibilityType)
    has_field_values   (s/maybe (apply s/enum (map name field/has-field-values-options)))
    settings           (s/maybe su/Map)
-   position           (s/maybe su/IntGreaterThanZero)}
+   position           (s/maybe su/IntGreaterThanOrEqualToZero)}
   (let [field              (hydrate (api/write-check Field id) :dimensions)
         new-special-type   (keyword (get body :special_type (:special_type field)))
         removed-fk?        (removed-fk-special-type? (:special_type field) new-special-type)
