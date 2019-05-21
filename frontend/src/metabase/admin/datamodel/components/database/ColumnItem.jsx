@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Link, withRouter } from "react-router";
 
 import InputBlurChange from "metabase/components/InputBlurChange.jsx";
+import NumericInput from "metabase/components/NumericInput.jsx";
 import Select, { Option } from "metabase/components/Select.jsx";
 import Icon from "metabase/components/Icon";
 import { t } from "ttag";
@@ -47,8 +48,8 @@ export default class Column extends Component {
   onVisibilityChange = ({ id: visibility_type }) =>
     this.updateField({ visibility_type });
 
-  onPositionChange = event =>
-    this.updateProperty("position", Number(event.target.value));
+  onPositionChange = value =>
+    this.updateProperty("position", value);
 
   render() {
     const { field, idfields } = this.props;
@@ -81,12 +82,11 @@ export default class Column extends Component {
                     idfields={idfields}
                   />
                 </div>
-                <div>
-                <InputBlurChange
-                    className="flex-full px1"
-                    type="text"
+                <div style={{flex:'0.2'}} className="bordered rounded">
+                  <NumericInput
+                    className="AdminInput TableEditor-field-position text-bold"
                     value={this.props.field.position.toString()}
-                    onBlurChange={this.onPositionChange}
+                    onChange={this.onPositionChange}
                   />
                 </div>
               </div>
