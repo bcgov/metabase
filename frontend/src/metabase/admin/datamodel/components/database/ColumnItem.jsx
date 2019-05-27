@@ -78,14 +78,14 @@ export default class Column extends Component {
             />
             <div className="clearfix">
               <div className="flex flex-full">
-                <div style={{flex:'0.4'}} className="px1">
+                <div style={{ flex: "0.4" }} className="px1">
                   <FieldVisibilityPicker
                     className="block"
                     field={field}
                     updateField={updateField}
                   />
                 </div>
-                <div style={{flex:'0.4'}} className="px1">
+                <div style={{ flex: "0.4" }} className="px1">
                   <SpecialTypeAndTargetPicker
                     className="block"
                     field={field}
@@ -93,7 +93,7 @@ export default class Column extends Component {
                     idfields={idfields}
                   />
                 </div>
-                <div style={{flex:'0.2'}} className="bordered rounded">
+                <div style={{ flex: "0.2" }} className="bordered rounded">
                   <NumericInput
                     className="AdminInput TableEditor-field-position text-bold"
                     value={this.props.field.position.toString()}

@@ -21,9 +21,9 @@ export default class ColumnsList extends Component {
             className="float-left px1"
           >{t`Column`}</div>
           <div className="flex">
-            <div style={{flex:'0.4'}} className="px1">{t`Visibility`}</div>
-            <div style={{flex:'0.4'}} className="px1">{t`Type`}</div>
-            <div style={{flex:'0.2'}} className="px1">{t`Position`}</div>
+            <div style={{ flex: "0.4" }} className="px1">{t`Visibility`}</div>
+            <div style={{ flex: "0.4" }} className="px1">{t`Type`}</div>
+            <div style={{ flex: "0.2" }} className="px1">{t`Position`}</div>
           </div>
         </div>
         <ol className="border-top border-bottom">
