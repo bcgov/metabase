@@ -12,8 +12,8 @@ import type {
 export function getFilters(filter: ?FilterClause): Filter[] {
   if (!filter || (Array.isArray(filter) && filter.length === 0)) {
     return [];
-  } else if (op(filter) === "and") {
-    return args(filter);
+  } else if (op(filter) === "and" || op(filter) === "or") {
+    return filter;
   } else {
     return [filter];
   }
@@ -25,6 +25,8 @@ function getFilterClause(filters: Filter[]): ?FilterClause {
     return undefined;
   } else if (filters.length === 1) {
     return filters[0];
+  } else if (isCompoundFilter(filters)) {
+    return filters;
   } else {
     return (["and", ...filters]: any);
   }
