@@ -24,7 +24,7 @@ type State = {
   shouldScroll: boolean,
 };
 
-export default class FilterList extends Component {
+export default class FilterWidgetList extends Component {
   props: Props;
   state: State;
 
