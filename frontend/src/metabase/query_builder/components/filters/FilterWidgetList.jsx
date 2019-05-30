@@ -63,11 +63,10 @@ export default class FilterWidgetList extends Component {
 
     const clauses = isCompoundFilter(filter) ? filter.slice(1) : [filter];
     const operator = clauses.length > 1 ? filter[0] : null
-    console.log(filter, clauses, operator)
     const widgets = []
     if (nestedClauseIndex.length > 0) {
       widgets.push(
-        <span className="flex flex-column justify-center">
+        <span className="flex flex-column justify-center pl1">
           <span className="p0 text-larger text-light text-bold">(</span>
         </span>
       );
@@ -114,7 +113,7 @@ export default class FilterWidgetList extends Component {
     });
     if (nestedClauseIndex.length > 0) {
       widgets.push(
-        <span className="flex flex-column justify-center">
+        <span className="flex flex-column justify-center pr2">
           <span className="p0 text-larger text-light text-bold">)</span>
         </span>
       );
@@ -123,10 +122,10 @@ export default class FilterWidgetList extends Component {
   }
 
   render() {
-    const { filter: filters } = this.props;
+    const { filter } = this.props;
     return (
       <div className="Query-filterList scroll-x scroll-show pl2">
-        {this.renderFilter(filters, [])}
+        {this.renderFilter(filter, [])}
       </div>
     );
   }

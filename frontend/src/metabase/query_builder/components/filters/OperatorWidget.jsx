@@ -8,8 +8,8 @@ export default class OperatorWidget extends Component {
         return (
             <span className="flex flex-column justify-center">
                 <span 
-                    className="p1 cursor-pointer text-underline text-medium 
-                    text-bold text-uppercase text-purple-hover"
+                    className="cursor-pointer text-underline text-medium 
+                    text-bold text-uppercase text-purple-hover text-smaller"
                     onClick={toggleOperator}
                 >
                     {operator}
