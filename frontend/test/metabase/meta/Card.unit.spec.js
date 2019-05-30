@@ -131,7 +131,7 @@ describe("metabase/meta/Card", () => {
           card: assocIn(
             dissoc(card, "id"),
             ["dataset_query", "query", "filter"],
-            ["and", ["=", ["field-id", 1], "bar"]],
+            ["=", ["field-id", 1], "bar"],
           ),
         });
       });
@@ -155,7 +155,7 @@ describe("metabase/meta/Card", () => {
           card: assocIn(
             cardWithOnlyOriginalCardId,
             ["dataset_query", "query", "filter"],
-            ["and", ["=", ["field-id", 1], "bar"]],
+            ["=", ["field-id", 1], "bar"],
           ),
         });
       });
@@ -173,7 +173,7 @@ describe("metabase/meta/Card", () => {
           card: assocIn(
             dissoc(card, "id"),
             ["dataset_query", "query", "filter"],
-            ["and", ["=", ["field-id", 2], 123]],
+            ["=", ["field-id", 2], 123],
           ),
         });
       });
@@ -192,10 +192,7 @@ describe("metabase/meta/Card", () => {
           card: assocIn(
             dissoc(card, "id"),
             ["dataset_query", "query", "filter"],
-            [
-              "and",
-              ["=", ["datetime-field", ["field-id", 3], "month"], "2017-05-01"],
-            ],
+            ["=", ["datetime-field", ["field-id", 3], "month"], "2017-05-01"],
           ),
         });
       });
@@ -213,10 +210,7 @@ describe("metabase/meta/Card", () => {
           card: assocIn(
             dissoc(card, "id"),
             ["dataset_query", "query", "filter"],
-            [
-              "and",
-              ["=", ["datetime-field", ["fk->", 4, 5], "month"], "2017-05-01"],
-            ],
+            ["=", ["datetime-field", ["fk->", 4, 5], "month"], "2017-05-01"],
           ),
         });
       });
