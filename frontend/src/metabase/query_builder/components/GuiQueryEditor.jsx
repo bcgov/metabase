@@ -144,7 +144,9 @@ export default class GuiQueryEditor extends Component {
               query.updateFilter(index, filter).update(setDatasetQuery)
             }
             toggleCompoundFilterOperator={(operatorIndex, nestedClauseIndex) =>
-              query.toggleCompoundFilterOperator(operatorIndex, nestedClauseIndex).update(setDatasetQuery)
+              query
+                .toggleCompoundFilterOperator(operatorIndex, nestedClauseIndex)
+                .update(setDatasetQuery)
             }
           />
         );
