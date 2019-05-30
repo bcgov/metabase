@@ -8,10 +8,11 @@ export default class OperatorWidget extends Component {
         return (
             <span className="flex flex-column justify-center">
                 <span 
-                    className="p1 bordered rounded cursor-pointer text-medium text-bold"
+                    className="p1 cursor-pointer text-underline text-medium 
+                    text-bold text-uppercase text-purple-hover"
                     onClick={toggleOperator}
                 >
-                    {operator.toUpperCase()}
+                    {operator}
                 </span>
             </span>
         );

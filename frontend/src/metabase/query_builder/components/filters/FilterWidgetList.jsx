@@ -8,15 +8,18 @@ import OperatorWidget from "./OperatorWidget.jsx";
 
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
 import type { Filter } from "metabase/meta/types/Query";
+import {isCompoundFilter} from "metabase/lib/query/filter";
+
 import Dimension from "metabase-lib/lib/Dimension";
 
 import type { TableMetadata } from "metabase/meta/types/Metadata";
 
 type Props = {
   query: StructuredQuery,
-  filters: Array<Filter>,
-  removeFilter?: (index: number) => void,
-  updateFilter?: (index: number, filter: Filter) => void,
+  filter: Filter,
+  removeFilter?: (index: number[]) => void,
+  updateFilter?: (index: number[], filter: Filter) => void,
+  toggleCompoundFilterOperator: (operatorIndex: number, nestedClauseIndex: number[]) => void,
   maxDisplayValues?: number,
   tableMetadata?: TableMetadata, // legacy parameter
 };
@@ -44,7 +47,7 @@ export default class FilterWidgetList extends Component {
 
   componentWillReceiveProps(nextProps: Props) {
     // only scroll when a filter is added
-    if (nextProps.filters.length > this.props.filters.length) {
+    if (nextProps.filter.length > this.props.filter.length) {
       this.setState({ shouldScroll: true });
     } else {
       this.setState({ shouldScroll: false });
@@ -55,53 +58,75 @@ export default class FilterWidgetList extends Component {
     this.componentDidUpdate();
   }
 
-  renderFilters(filters: Array<Filter>, filtersIndex: number) {
-    const { query, tableMetadata, updateOperator, updateFilter, removeFilter, maxDisplayValues } = this.props;
-    const clauses = filters.length > 1 ? filters.slice(1) : filters;
-    const operator = filters.length > 1 ? filters[0] : null
-    console.log(filters, clauses, operator)
+  renderFilter(filter: Filter, nestedClauseIndex: number[]) {
+    const { query, tableMetadata, toggleCompoundFilterOperator, updateFilter, removeFilter, maxDisplayValues } = this.props;
+
+    const clauses = isCompoundFilter(filter) ? filter.slice(1) : [filter];
+    const operator = clauses.length > 1 ? filter[0] : null
+    console.log(filter, clauses, operator)
     const widgets = []
-    clauses.forEach((filter, index) => {
+    if (nestedClauseIndex.length > 0) {
       widgets.push(
-        <FilterWidget
-          key={index}
-          placeholder={t`Item`}
-          // TODO: update widgets that are still passing tableMetadata instead of query
-          query={
-            query || {
-              table: () => tableMetadata,
-              parseFieldReference: fieldRef =>
-                Dimension.parseMBQL(fieldRef, tableMetadata),
+        <span className="flex flex-column justify-center">
+          <span className="p0 text-larger text-light text-bold">(</span>
+        </span>
+      );
+    }
+    clauses.forEach((filter, i) => {
+      // The full nested index of the clause. 
+      // If there is an operator, that is the first element of the array, so we add an offset
+      const index = [...nestedClauseIndex, operator ? i + 1 : i];
+      if (isCompoundFilter(filter)) {
+        widgets.push(this.renderFilter(filter, index))
+      } else {
+        widgets.push(
+          <FilterWidget
+            key={i}
+            placeholder={t`Item`}
+            // TODO: update widgets that are still passing tableMetadata instead of query
+            query={
+              query || {
+                table: () => tableMetadata,
+                parseFieldReference: fieldRef =>
+                  Dimension.parseMBQL(fieldRef, tableMetadata),
+              }
             }
-          }
-          filter={filter}
-          index={index}
-          removeFilter={removeFilter}
-          updateFilter={updateFilter}
-          maxDisplayValues={maxDisplayValues}
-        />
-      )
-      if (index < clauses.length - 1) {
+            filter={filter}
+            index={index}
+            removeFilter={removeFilter}
+            updateFilter={updateFilter}
+            maxDisplayValues={maxDisplayValues}
+          />
+        )
+      }
+      if (i < clauses.length - 1) {
         widgets.push(
           <OperatorWidget 
-            key={`op${index}`} 
+            key={`op${i}`} 
             operator={operator} 
             toggleOperator={() => {
-              updateFilter(0, operator === "and" ? "or" :"and")
+              toggleCompoundFilterOperator(i, nestedClauseIndex)
             }}
           />
         )
       }
      
     });
+    if (nestedClauseIndex.length > 0) {
+      widgets.push(
+        <span className="flex flex-column justify-center">
+          <span className="p0 text-larger text-light text-bold">)</span>
+        </span>
+      );
+    }
     return widgets
   }
 
   render() {
-    const { filters } = this.props;
+    const { filter: filters } = this.props;
     return (
-      <div className="Query-filterList scroll-x scroll-show">
-        {this.renderFilters(filters, 0)}
+      <div className="Query-filterList scroll-x scroll-show pl2">
+        {this.renderFilter(filters, [])}
       </div>
     );
   }

@@ -488,6 +488,10 @@ export default class StructuredQuery extends AtomicQuery {
     return Q.getFilters(this.query());
   }
 
+  filterClause(): Filter {
+    return Q.getFilterClause(this.query());
+  }
+
   /**
    * @returns @type {DimensionOptions} that can be used in filters.
    */
@@ -555,6 +559,10 @@ export default class StructuredQuery extends AtomicQuery {
    */
   clearFilters() {
     return this._updateQuery(Q.clearFilters, arguments);
+  }
+
+  toggleCompoundFilterOperator(operatorIndex: number, nestedClauseIndex: number[]) {
+    return this._updateQuery(Q.toggleCompoundFilterOperator, arguments);
   }
 
   // SORTS
