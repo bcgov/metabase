@@ -141,7 +141,7 @@ export const addOrUpdateFilter = (card, filter) => {
     ) {
       newCard.dataset_query.query = Query.updateFilter(
         newCard.dataset_query.query,
-        index,
+        [index],
         filter,
       );
       return newCard;

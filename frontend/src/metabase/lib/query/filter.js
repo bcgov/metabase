@@ -13,6 +13,7 @@ import type {
   FilterClause,
   Filter,
   FilterOptions,
+  CompoundFilter,
 } from "metabase/meta/types/Query";
 
 // returns canonical list of Filters
@@ -26,7 +27,7 @@ export function getFilters(filter: ?FilterClause): Filter[] {
   }
 }
 
-function consolidateFilterClause(filter: FilterClause): ?FilterClause {
+function consolidateFilterClause(filter: FilterClause): any {
   // A simple filter, nothing to consolidate
   if (!isCompoundFilter(filter)) {
     if (filter.length === 1) {
@@ -40,33 +41,38 @@ function consolidateFilterClause(filter: FilterClause): ?FilterClause {
     return filter[1];
   }
 
-  return [op(filter), ...filter.slice(1).map(consolidateFilterClause)];
+  return [op(filter), ...args(filter).map(consolidateFilterClause)];
 }
 
 export function addFilter(
   clause: ?FilterClause,
   newFilter: FilterClause,
-): FilterClause {
-  if (clause === undefined) {
+): any {
+  if (!clause) {
     return newFilter; // The clause has a single filter, no operator needed
   }
   return isCompoundFilter(clause)
-    ? [...clause, newFilter]
+    ? [op(clause), ...args(clause), newFilter]
     : ["and", clause, newFilter];
 }
 
 export function updateFilter(
-  filter: FilterClause,
+  filter: ?FilterClause,
   index: number[],
-  updatedFilter: FilterClause,
-): FilterClause {
-  console.log("update", filter, index, updatedFilter);
+  updatedFilter: any,
+): ?FilterClause {
+  if (!filter) {
+    return filter
+  }
   return consolidateFilterClause(updateNested(filter, index, updatedFilter));
 }
 export function removeFilter(
-  filter: FilterClause,
+  filter: ?FilterClause,
   index: number[],
-): FilterClause {
+): ?FilterClause {
+  if (!filter) {
+    return filter
+  }
   return consolidateFilterClause(removeNested(filter, index));
 }
 export function clearFilters(filter: ?FilterClause): ?FilterClause {
@@ -74,36 +80,37 @@ export function clearFilters(filter: ?FilterClause): ?FilterClause {
 }
 
 export function toggleCompoundFilterOperator(
-  clause: FilterClause,
+  clause: any,
   operatorIndex: number,
   nestedClauseIndex: number[],
-): FilterClause {
+): any {
   // go down in the nested statements
   let filterToToggle = clause;
   let parentClause = null;
   for (const i of nestedClauseIndex) {
     parentClause = filterToToggle;
-    filterToToggle = [...filterToToggle[i]];
+    filterToToggle = [...filterToToggle[i]] ;
   }
 
   const newOperator = op(filterToToggle) === "and" ? "or" : "and";
-
-  let lhs = [filterToToggle[operatorIndex + 1]];
+  const filterArgs = args(filterToToggle)
+  let lhs = [filterArgs[operatorIndex]];
   if (isCompoundFilter(lhs[0]) && op(lhs[0]) === newOperator) {
-    lhs = lhs[0].slice(1);
+    lhs = args(lhs[0]);
   }
-  let rhs = [filterToToggle[operatorIndex + 2]];
+  let rhs = [filterArgs[operatorIndex + 1]];
   if (isCompoundFilter(rhs[0]) && op(rhs[0]) === newOperator) {
-    rhs = rhs[0].slice(1);
+    rhs = args(rhs[0]);
   }
 
   let newFilter;
 
   if (filterToToggle.length > 3) {
     newFilter = [
-      ...filterToToggle.slice(0, operatorIndex + 1),
+      op(filterToToggle),
+      ...filterArgs.slice(0, operatorIndex),
       [newOperator, ...lhs, ...rhs],
-      ...filterToToggle.slice(operatorIndex + 3),
+      ...filterArgs.slice(operatorIndex + 2),
     ];
   } else {
     newFilter = [newOperator, ...lhs, ...rhs];
@@ -116,7 +123,7 @@ export function toggleCompoundFilterOperator(
         nestedClauseIndex.slice(0, nestedClauseIndex.length - 1),
         [
           ...parentClause.slice(0, indexToExpand),
-          ...newFilter.slice(1),
+          ...args(newFilter),
           ...parentClause.slice(indexToExpand + 1),
         ],
       );
@@ -139,7 +146,7 @@ export function isSegmentFilter(filter: FilterClause): boolean {
   return Array.isArray(filter) && filter[0] === "segment";
 }
 
-export function isCompoundFilter(filter: FilterClause): boolean {
+export function isCompoundFilter(filter: any): boolean {
   return Array.isArray(filter) && (filter[0] === "and" || filter[0] === "or");
 }
 
