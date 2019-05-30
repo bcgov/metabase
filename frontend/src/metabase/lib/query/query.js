@@ -79,7 +79,7 @@ export const addFilter = (query: SQ, filter: Filter) =>
 
 export const updateFilter = (query: SQ, index: number[], filter: Filter) =>
   setFilterClause(query, F.updateFilter(query.filter, index, filter));
-export const removeFilter = (query: SQ, index: number[]) => 
+export const removeFilter = (query: SQ, index: number[]) =>
   setFilterClause(query, F.removeFilter(query.filter, index));
 export const clearFilters = (query: SQ) =>
   setFilterClause(query, F.clearFilters(query.filter));

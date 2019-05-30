@@ -44,10 +44,7 @@ function consolidateFilterClause(filter: FilterClause): any {
   return [op(filter), ...args(filter).map(consolidateFilterClause)];
 }
 
-export function addFilter(
-  clause: ?FilterClause,
-  newFilter: FilterClause,
-): any {
+export function addFilter(clause: ?FilterClause, newFilter: FilterClause): any {
   if (!clause) {
     return newFilter; // The clause has a single filter, no operator needed
   }
@@ -62,7 +59,7 @@ export function updateFilter(
   updatedFilter: any,
 ): ?FilterClause {
   if (!filter) {
-    return filter
+    return filter;
   }
   return consolidateFilterClause(updateNested(filter, index, updatedFilter));
 }
@@ -71,7 +68,7 @@ export function removeFilter(
   index: number[],
 ): ?FilterClause {
   if (!filter) {
-    return filter
+    return filter;
   }
   return consolidateFilterClause(removeNested(filter, index));
 }
@@ -89,11 +86,11 @@ export function toggleCompoundFilterOperator(
   let parentClause = null;
   for (const i of nestedClauseIndex) {
     parentClause = filterToToggle;
-    filterToToggle = [...filterToToggle[i]] ;
+    filterToToggle = [...filterToToggle[i]];
   }
 
   const newOperator = op(filterToToggle) === "and" ? "or" : "and";
-  const filterArgs = args(filterToToggle)
+  const filterArgs = args(filterToToggle);
   let lhs = [filterArgs[operatorIndex]];
   if (isCompoundFilter(lhs[0]) && op(lhs[0]) === newOperator) {
     lhs = args(lhs[0]);
