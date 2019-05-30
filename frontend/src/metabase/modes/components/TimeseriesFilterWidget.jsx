@@ -136,7 +136,7 @@ export default class TimeseriesFilterWidget extends Component {
               let query = Card.getQuery(card);
               if (query) {
                 if (filterIndex >= 0) {
-                  query = Query.updateFilter(query, filterIndex, filter);
+                  query = Query.updateFilter(query, [filterIndex], filter);
                 } else {
                   query = Query.addFilter(query, filter);
                 }

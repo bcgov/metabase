@@ -17,8 +17,8 @@ type Props = {
   query: StructuredQuery,
   filter: FilterType,
   index: number[],
-  updateFilter?: (index: number, field: FilterType) => void,
-  removeFilter?: (index: number) => void,
+  updateFilter?: (index: number[], field: FilterType) => void,
+  removeFilter?: (index: number[]) => void,
   maxDisplayValues?: number,
 };
 type State = {

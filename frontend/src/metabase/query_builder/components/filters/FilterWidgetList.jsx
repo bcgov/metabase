@@ -7,7 +7,7 @@ import FilterWidget from "./FilterWidget.jsx";
 import OperatorWidget from "./OperatorWidget.jsx";
 
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
-import type { Filter } from "metabase/meta/types/Query";
+import type { Filter, CompoundFilter } from "metabase/meta/types/Query";
 import { isCompoundFilter } from "metabase/lib/query/filter";
 
 import Dimension from "metabase-lib/lib/Dimension";
@@ -81,7 +81,7 @@ export default class FilterWidgetList extends Component {
         </span>,
       );
     }
-    clauses.forEach((filter, i) => {
+    (clauses: any[]).forEach((filter, i) => {
       // The full nested index of the clause.
       // If there is an operator, that is the first element of the array, so we add an offset
       const index = [...nestedClauseIndex, operator ? i + 1 : i];

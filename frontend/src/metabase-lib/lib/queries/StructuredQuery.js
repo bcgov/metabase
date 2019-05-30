@@ -488,7 +488,7 @@ export default class StructuredQuery extends AtomicQuery {
     return Q.getFilters(this.query());
   }
 
-  filterClause(): Filter {
+  filterClause(): ?Filter {
     return Q.getFilterClause(this.query());
   }
 
@@ -543,14 +543,14 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns {StructuredQuery} new query with the MBQL @type {Filter} updated at the provided index.
    */
-  updateFilter(index: number, filter: Filter) {
+  updateFilter(index: number[], filter: Filter) {
     return this._updateQuery(Q.updateFilter, arguments);
   }
 
   /**
    * @returns {StructuredQuery} new query with the filter at the provided index removed.
    */
-  removeFilter(index: number) {
+  removeFilter(index: number[]) {
     return this._updateQuery(Q.removeFilter, arguments);
   }
 

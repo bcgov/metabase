@@ -38,7 +38,7 @@ export const noNullValues = (clause: any[]): boolean =>
   _.all(clause, c => c != null);
 
 // these are mostly to circumvent Flow type checking :-/
-export const op = (clause: any): string => clause[0];
+export const op = (clause: any): any => clause[0];
 export const args = (clause: any[]): any[] => clause.slice(1);
 
 export const add = <T>(items: T[], item: T): T[] => [...items, item];
@@ -47,11 +47,11 @@ export const update = <T>(items: T[], index: number, newItem: T): T[] => [
   newItem,
   ...items.slice(index + 1),
 ];
-export const updateNested = <T>(
-  items: T[],
+export const updateNested = (
+  items: any,
   index: number[],
-  newItem: T,
-): T[] => {
+  newItem: any,
+): any => {
   if (index.length === 0) {
     return newItem;
   }
@@ -67,7 +67,7 @@ export const remove = <T>(items: T[], index: number): T[] => [
   ...items.slice(index + 1),
 ];
 
-export const removeNested = <T>(items: T[], index: number[]): T[] => {
+export const removeNested = (items: any, index: number[]): any => {
   if (index.length === 1) {
     return [...items.slice(0, index[0]), ...items.slice(index[0] + 1)];
   }
