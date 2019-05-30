@@ -21,7 +21,6 @@ export function getFilters(filter: ?FilterClause): Filter[] {
 
 
 function consolidateFilterClause(filter: FilterClause): ?FilterClause {
-  console.log("consolidate", filter);
   // A simple filter, nothing to consolidate
   if (!isCompoundFilter(filter)) {
     if (filter.length === 1) {
@@ -42,7 +41,6 @@ export function addFilter(
   clause: ?FilterClause,
   newFilter: FilterClause,
 ): FilterClause {
-  console.log("addFilter", clause, newFilter)
   if (clause === undefined) {
     return newFilter; // The clause has a single filter, no operator needed
   }
@@ -54,14 +52,13 @@ export function updateFilter(
   index: number[],
   updatedFilter: FilterClause,
 ): FilterClause {
-  console.log("updateFilter", filter, index, updatedFilter);
+  console.log("update", filter, index, updatedFilter)
   return consolidateFilterClause(updateNested(filter, index, updatedFilter));
 }
 export function removeFilter(
   filter: FilterClause,
   index: number[],
 ): FilterClause {
-  console.log("removeFilter", filter, index)
   return consolidateFilterClause(removeNested(filter, index));
 }
 export function clearFilters(filter: ?FilterClause): ?FilterClause {
@@ -71,26 +68,60 @@ export function clearFilters(filter: ?FilterClause): ?FilterClause {
 export function toggleCompoundFilterOperator(
   clause: FilterClause,
   operatorIndex: number,
-  nestedClauseIndex: number[], // TODO: use this
+  nestedClauseIndex: number[],
 ): FilterClause {
+
+  // go down in the nested statements
   let filterToToggle = clause;
+  let parentClause = null;
   for (const i of nestedClauseIndex) {
+    parentClause = filterToToggle;
     filterToToggle = [...filterToToggle[i]];
   }
-  let lhsFilters = filterToToggle.slice(1, operatorIndex + 2);
-  let rhsFilters = filterToToggle.slice(operatorIndex + 2);
-  if (lhsFilters.length > 1) {
-    lhsFilters = [[op(filterToToggle), ...lhsFilters]];
-  } else if (isCompoundFilter(lhsFilters[0]) && op(lhsFilters[0]) !== op(filterToToggle)) {
-    lhsFilters = lhsFilters[0].slice(1);
+
+  const newOperator = op(filterToToggle) === "and" ? "or" : "and";
+  
+  let lhs = [filterToToggle[operatorIndex + 1]]
+  if (isCompoundFilter(lhs[0]) && op(lhs[0]) === newOperator) {
+    lhs = lhs[0].slice(1)
   }
-  if (rhsFilters.length > 1) {
-    rhsFilters = [[op(filterToToggle), ...rhsFilters]];
-  } if (isCompoundFilter(rhsFilters[0]) && op(rhsFilters[0]) !== op(filterToToggle)) {
-    rhsFilters = rhsFilters[0].slice(1);
+  let rhs = [filterToToggle[operatorIndex + 2]]
+  if (isCompoundFilter(rhs[0]) && op(rhs[0]) === newOperator) {
+    rhs = rhs[0].slice(1)
   }
-  return updateNested(
-    clause, nestedClauseIndex, [op(clause) === "and" ? "or" : "and", ...lhsFilters, ...rhsFilters]
+
+  let newFilter 
+  
+  if (filterToToggle.length > 3) {
+    newFilter = [
+      ...filterToToggle.slice(0, operatorIndex + 1),
+      [
+        newOperator,
+        ...lhs,
+        ...rhs
+      ],
+      ...filterToToggle.slice(operatorIndex + 3),
+    ]
+  } else {
+    newFilter = [newOperator, ...lhs, ...rhs];
+
+    if (parentClause && op(parentClause) === newOperator) {
+      const indexToExpand = nestedClauseIndex[nestedClauseIndex.length - 1]
+      // The curent clause should be expanded in the parent
+      return updateFilter(
+        clause,
+        nestedClauseIndex.slice(0, nestedClauseIndex.length - 1),
+        [
+          ...parentClause.slice(0, indexToExpand),
+          ...newFilter.slice(1),
+          ...parentClause.slice(indexToExpand + 1),
+        ]
+      )
+    }
+
+  }
+  return updateFilter(
+    clause, nestedClauseIndex, newFilter
   );
 }
 
