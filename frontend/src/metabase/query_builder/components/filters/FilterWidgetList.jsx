@@ -8,7 +8,7 @@ import OperatorWidget from "./OperatorWidget.jsx";
 
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
 import type { Filter } from "metabase/meta/types/Query";
-import {isCompoundFilter} from "metabase/lib/query/filter";
+import { isCompoundFilter } from "metabase/lib/query/filter";
 
 import Dimension from "metabase-lib/lib/Dimension";
 
@@ -19,7 +19,10 @@ type Props = {
   filter: Filter,
   removeFilter?: (index: number[]) => void,
   updateFilter?: (index: number[], filter: Filter) => void,
-  toggleCompoundFilterOperator: (operatorIndex: number, nestedClauseIndex: number[]) => void,
+  toggleCompoundFilterOperator: (
+    operatorIndex: number,
+    nestedClauseIndex: number[],
+  ) => void,
   maxDisplayValues?: number,
   tableMetadata?: TableMetadata, // legacy parameter
 };
@@ -59,24 +62,31 @@ export default class FilterWidgetList extends Component {
   }
 
   renderFilter(filter: Filter, nestedClauseIndex: number[]) {
-    const { query, tableMetadata, toggleCompoundFilterOperator, updateFilter, removeFilter, maxDisplayValues } = this.props;
+    const {
+      query,
+      tableMetadata,
+      toggleCompoundFilterOperator,
+      updateFilter,
+      removeFilter,
+      maxDisplayValues,
+    } = this.props;
 
     const clauses = isCompoundFilter(filter) ? filter.slice(1) : [filter];
-    const operator = clauses.length > 1 ? filter[0] : null
-    const widgets = []
+    const operator = clauses.length > 1 ? filter[0] : null;
+    const widgets = [];
     if (nestedClauseIndex.length > 0) {
       widgets.push(
         <span className="flex flex-column justify-center pl1">
           <span className="p0 text-larger text-light text-bold">(</span>
-        </span>
+        </span>,
       );
     }
     clauses.forEach((filter, i) => {
-      // The full nested index of the clause. 
+      // The full nested index of the clause.
       // If there is an operator, that is the first element of the array, so we add an offset
       const index = [...nestedClauseIndex, operator ? i + 1 : i];
       if (isCompoundFilter(filter)) {
-        widgets.push(this.renderFilter(filter, index))
+        widgets.push(this.renderFilter(filter, index));
       } else {
         widgets.push(
           <FilterWidget
@@ -95,30 +105,29 @@ export default class FilterWidgetList extends Component {
             removeFilter={removeFilter}
             updateFilter={updateFilter}
             maxDisplayValues={maxDisplayValues}
-          />
-        )
+          />,
+        );
       }
       if (i < clauses.length - 1) {
         widgets.push(
-          <OperatorWidget 
-            key={`op${i}`} 
-            operator={operator} 
+          <OperatorWidget
+            key={`op${i}`}
+            operator={operator}
             toggleOperator={() => {
-              toggleCompoundFilterOperator(i, nestedClauseIndex)
+              toggleCompoundFilterOperator(i, nestedClauseIndex);
             }}
-          />
-        )
+          />,
+        );
       }
-     
     });
     if (nestedClauseIndex.length > 0) {
       widgets.push(
         <span className="flex flex-column justify-center pr2">
           <span className="p0 text-larger text-light text-bold">)</span>
-        </span>
+        </span>,
       );
     }
-    return widgets
+    return widgets;
   }
 
   render() {

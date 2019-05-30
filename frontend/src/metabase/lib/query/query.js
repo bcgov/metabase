@@ -84,8 +84,19 @@ export const removeFilter = (query: SQ, index: number[]) =>
 export const clearFilters = (query: SQ) =>
   setFilterClause(query, F.clearFilters(query.filter));
 
-export const toggleCompoundFilterOperator = (query: SQ, operatorIndex: number, nestedClauseIndex: number[]) =>
-  setFilterClause(query, F.toggleCompoundFilterOperator(query.filter, operatorIndex, nestedClauseIndex));
+export const toggleCompoundFilterOperator = (
+  query: SQ,
+  operatorIndex: number,
+  nestedClauseIndex: number[],
+) =>
+  setFilterClause(
+    query,
+    F.toggleCompoundFilterOperator(
+      query.filter,
+      operatorIndex,
+      nestedClauseIndex,
+    ),
+  );
 
 export const canAddFilter = (query: SQ) => F.canAddFilter(query.filter);
 

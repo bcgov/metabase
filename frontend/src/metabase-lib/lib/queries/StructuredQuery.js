@@ -561,7 +561,10 @@ export default class StructuredQuery extends AtomicQuery {
     return this._updateQuery(Q.clearFilters, arguments);
   }
 
-  toggleCompoundFilterOperator(operatorIndex: number, nestedClauseIndex: number[]) {
+  toggleCompoundFilterOperator(
+    operatorIndex: number,
+    nestedClauseIndex: number[],
+  ) {
     return this._updateQuery(Q.toggleCompoundFilterOperator, arguments);
   }
 

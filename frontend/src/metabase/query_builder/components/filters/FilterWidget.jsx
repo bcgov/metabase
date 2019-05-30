@@ -130,9 +130,7 @@ export default class FilterWidget extends Component {
   render() {
     const { index, removeFilter } = this.props;
     return (
-      <div
-        className={cx("Query-filter p1", { selected: this.state.isOpen })}
-      >
+      <div className={cx("Query-filter p1", { selected: this.state.isOpen })}>
         <div className="flex justify-center" onClick={this.open}>
           {this.renderFilter()}
           {this.renderPopover()}
