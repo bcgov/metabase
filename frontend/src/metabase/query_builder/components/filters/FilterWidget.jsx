@@ -16,7 +16,7 @@ import type { FilterRenderer } from "metabase/query_builder/components/Filter";
 type Props = {
   query: StructuredQuery,
   filter: FilterType,
-  index: number,
+  index: number[],
   updateFilter?: (index: number, field: FilterType) => void,
   removeFilter?: (index: number) => void,
   maxDisplayValues?: number,
@@ -131,7 +131,7 @@ export default class FilterWidget extends Component {
     const { index, removeFilter } = this.props;
     return (
       <div
-        className={cx("Query-filter p1 pl2", { selected: this.state.isOpen })}
+        className={cx("Query-filter p1", { selected: this.state.isOpen })}
       >
         <div className="flex justify-center" onClick={this.open}>
           {this.renderFilter()}
@@ -139,7 +139,7 @@ export default class FilterWidget extends Component {
         </div>
         {removeFilter && (
           <a
-            className="text-light no-decoration px1 flex align-center"
+            className="pt1 text-light no-decoration"
             onClick={() => removeFilter(index)}
           >
             <Icon name="close" size={14} />

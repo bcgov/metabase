@@ -47,8 +47,33 @@ export const update = <T>(items: T[], index: number, newItem: T): T[] => [
   newItem,
   ...items.slice(index + 1),
 ];
+export const updateNested = <T>(items: T[], index: number[], newItem:T): T[] => {
+  if (index.length === 0) {
+    return newItem;
+  }
+  
+  return [
+    ...items.slice(0, index[0]),
+    updateNested(items[index[0]], index.slice(1), newItem),
+    ...items.slice(index[0] + 1)
+  ];
+}
 export const remove = <T>(items: T[], index: number): T[] => [
   ...items.slice(0, index),
   ...items.slice(index + 1),
 ];
+
+export const removeNested = <T>(items: T[], index: number[]): T[] => {
+  if (index.length === 1) {
+    return [
+      ...items.slice(0, index[0]),
+      ...items.slice(index[0] + 1),
+    ]
+  }
+  return [
+    ...items.slice(0, index[0]),
+    removeNested(items[index[0]], index.slice(1)),
+    ...items.slice(index[0] + 1)
+  ];
+}
 export const clear = <T>(): T[] => [];

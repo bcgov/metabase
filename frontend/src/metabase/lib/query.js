@@ -140,14 +140,16 @@ const Query = {
     }
 
     // filters
-    const filters = Query.getFilters(query).filter(filter =>
-      _.all(filter, a => a != null),
-    );
-    if (filters.length > 0) {
-      query.filter = ["and", ...filters];
-    } else {
-      delete query.filter;
-    }
+    // TODO: perform a recursive clean
+    //const filters = Query.getFilters(query)
+    // .filter(filter =>
+    //   _.all(filter, a => a != null),
+    // );
+    // if (filters.length > 0) {
+    //   query.filter = filters;
+    // } else {
+    //   delete query.filter;
+    // }
 
     if (query["order-by"]) {
       query["order-by"] = query["order-by"]
