@@ -70,7 +70,11 @@ export function removeFilter(
   if (!filter) {
     return filter;
   }
-  return consolidateFilterClause(removeNested(filter, index));
+  if (isCompoundFilter(filter)) {
+    return consolidateFilterClause(removeNested(filter, index));
+  }
+
+  return undefined;
 }
 export function clearFilters(filter: ?FilterClause): ?FilterClause {
   return consolidateFilterClause(clear());
