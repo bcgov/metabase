@@ -60,6 +60,9 @@ export function updateFilter(
   if (!filter) {
     return filter;
   }
+  if (!isCompoundFilter(filter)) {
+    return updatedFilter;
+  }
   return consolidateFilterClause(updateNested(filter, index, updatedFilter));
 }
 export function removeFilter(

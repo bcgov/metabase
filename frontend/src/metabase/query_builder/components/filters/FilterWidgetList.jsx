@@ -61,7 +61,7 @@ export default class FilterWidgetList extends Component {
     this.componentDidUpdate();
   }
 
-  renderFilter(filter: Filter, nestedClauseIndex: number[]) {
+  renderFilter(clause: Filter, nestedClauseIndex: number[]) {
     const {
       query,
       tableMetadata,
@@ -71,8 +71,8 @@ export default class FilterWidgetList extends Component {
       maxDisplayValues,
     } = this.props;
 
-    const clauses = isCompoundFilter(filter) ? filter.slice(1) : [filter];
-    const operator = clauses.length > 1 ? filter[0] : null;
+    const filters = isCompoundFilter(clause) ? clause.slice(1) : [clause];
+    const operator = filters.length > 1 ? clause[0] : null;
     const widgets = [];
     if (nestedClauseIndex.length > 0) {
       widgets.push(
@@ -81,7 +81,7 @@ export default class FilterWidgetList extends Component {
         </span>,
       );
     }
-    (clauses: any[]).forEach((filter, i) => {
+    (filters: any[]).forEach((filter, i) => {
       // The full nested index of the clause.
       // If there is an operator, that is the first element of the array, so we add an offset
       const index = [...nestedClauseIndex, operator ? i + 1 : i];
@@ -108,7 +108,7 @@ export default class FilterWidgetList extends Component {
           />,
         );
       }
-      if (i < clauses.length - 1) {
+      if (i < filters.length - 1) {
         widgets.push(
           <OperatorWidget
             key={`op${i}`}
