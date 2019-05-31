@@ -7,7 +7,7 @@ import FilterWidget from "./FilterWidget.jsx";
 import OperatorWidget from "./OperatorWidget.jsx";
 
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
-import type { Filter, CompoundFilter } from "metabase/meta/types/Query";
+import type { Filter } from "metabase/meta/types/Query";
 import { isCompoundFilter } from "metabase/lib/query/filter";
 
 import Dimension from "metabase-lib/lib/Dimension";

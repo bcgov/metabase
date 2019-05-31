@@ -13,7 +13,6 @@ import type {
   FilterClause,
   Filter,
   FilterOptions,
-  CompoundFilter,
 } from "metabase/meta/types/Query";
 
 // returns canonical list of Filters
