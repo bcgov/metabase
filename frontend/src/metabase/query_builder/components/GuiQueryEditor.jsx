@@ -130,18 +130,23 @@ export default class GuiQueryEditor extends Component {
 
     if (query.isEditable()) {
       enabled = true;
-
-      let filters = query.filters();
-      if (filters && filters.length > 0) {
+      // REF: query is used here
+      let filter = query.filterClause();
+      if (filter) {
         filterList = (
           <FilterWidgetList
             query={query}
-            filters={filters}
+            filter={filter}
             removeFilter={index =>
               query.removeFilter(index).update(setDatasetQuery)
             }
             updateFilter={(index, filter) =>
               query.updateFilter(index, filter).update(setDatasetQuery)
+            }
+            toggleCompoundFilterOperator={(operatorIndex, nestedClauseIndex) =>
+              query
+                .toggleCompoundFilterOperator(operatorIndex, nestedClauseIndex)
+                .update(setDatasetQuery)
             }
           />
         );

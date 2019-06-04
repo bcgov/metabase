@@ -1,6 +1,13 @@
 /* @flow */
 
-import { op, args, noNullValues, add, update, remove, clear } from "./util";
+import {
+  op,
+  args,
+  noNullValues,
+  updateNested,
+  removeNested,
+  clear,
+} from "./util";
 
 import type {
   FilterClause,
@@ -12,45 +19,120 @@ import type {
 export function getFilters(filter: ?FilterClause): Filter[] {
   if (!filter || (Array.isArray(filter) && filter.length === 0)) {
     return [];
-  } else if (op(filter) === "and") {
+  } else if (op(filter) === "and" || op(filter) === "or") {
     return args(filter);
   } else {
     return [filter];
   }
 }
 
-// turns a list of Filters into the canonical FilterClause, either `undefined`, `filter`, or `["and", filter...]`
-function getFilterClause(filters: Filter[]): ?FilterClause {
-  if (filters.length === 0) {
-    return undefined;
-  } else if (filters.length === 1) {
-    return filters[0];
-  } else {
-    return (["and", ...filters]: any);
+function consolidateFilterClause(filter: FilterClause): any {
+  // A simple filter, nothing to consolidate
+  if (!isCompoundFilter(filter)) {
+    if (filter.length === 1) {
+      return filter[0];
+    }
+    return filter;
   }
+
+  // We just removed a filter and have a compound filter with a single clause
+  if (filter.length === 2) {
+    return filter[1];
+  }
+
+  return [op(filter), ...args(filter).map(consolidateFilterClause)];
 }
 
-export function addFilter(
-  filter: ?FilterClause,
-  newFilter: FilterClause,
-): ?FilterClause {
-  return getFilterClause(add(getFilters(filter), newFilter));
+export function addFilter(clause: ?FilterClause, newFilter: FilterClause): any {
+  if (!clause) {
+    return newFilter; // The clause has a single filter, no operator needed
+  }
+  return isCompoundFilter(clause)
+    ? [op(clause), ...args(clause), newFilter]
+    : ["and", clause, newFilter];
 }
+
 export function updateFilter(
   filter: ?FilterClause,
-  index: number,
-  updatedFilter: FilterClause,
+  index: number[],
+  updatedFilter: any,
 ): ?FilterClause {
-  return getFilterClause(update(getFilters(filter), index, updatedFilter));
+  if (!filter) {
+    return filter;
+  }
+  if (!isCompoundFilter(filter)) {
+    return updatedFilter;
+  }
+  return consolidateFilterClause(updateNested(filter, index, updatedFilter));
 }
 export function removeFilter(
   filter: ?FilterClause,
-  index: number,
+  index: number[],
 ): ?FilterClause {
-  return getFilterClause(remove(getFilters(filter), index));
+  if (!filter) {
+    return filter;
+  }
+  if (isCompoundFilter(filter)) {
+    return consolidateFilterClause(removeNested(filter, index));
+  }
+
+  return undefined;
 }
 export function clearFilters(filter: ?FilterClause): ?FilterClause {
-  return getFilterClause(clear());
+  return consolidateFilterClause(clear());
+}
+
+export function toggleCompoundFilterOperator(
+  clause: any,
+  operatorIndex: number,
+  nestedClauseIndex: number[],
+): any {
+  // go down in the nested statements
+  let filterToToggle = clause;
+  let parentClause = null;
+  for (const i of nestedClauseIndex) {
+    parentClause = filterToToggle;
+    filterToToggle = [...filterToToggle[i]];
+  }
+
+  const newOperator = op(filterToToggle) === "and" ? "or" : "and";
+  const filterArgs = args(filterToToggle);
+  let lhs = [filterArgs[operatorIndex]];
+  if (isCompoundFilter(lhs[0]) && op(lhs[0]) === newOperator) {
+    lhs = args(lhs[0]);
+  }
+  let rhs = [filterArgs[operatorIndex + 1]];
+  if (isCompoundFilter(rhs[0]) && op(rhs[0]) === newOperator) {
+    rhs = args(rhs[0]);
+  }
+
+  let newFilter;
+
+  if (filterToToggle.length > 3) {
+    newFilter = [
+      op(filterToToggle),
+      ...filterArgs.slice(0, operatorIndex),
+      [newOperator, ...lhs, ...rhs],
+      ...filterArgs.slice(operatorIndex + 2),
+    ];
+  } else {
+    newFilter = [newOperator, ...lhs, ...rhs];
+
+    if (parentClause && op(parentClause) === newOperator) {
+      const indexToExpand = nestedClauseIndex[nestedClauseIndex.length - 1];
+      // The curent clause should be expanded in the parent
+      return updateFilter(
+        clause,
+        nestedClauseIndex.slice(0, nestedClauseIndex.length - 1),
+        [
+          ...parentClause.slice(0, indexToExpand),
+          ...args(newFilter),
+          ...parentClause.slice(indexToExpand + 1),
+        ],
+      );
+    }
+  }
+  return updateFilter(clause, nestedClauseIndex, newFilter);
 }
 
 // MISC
@@ -67,7 +149,7 @@ export function isSegmentFilter(filter: FilterClause): boolean {
   return Array.isArray(filter) && filter[0] === "segment";
 }
 
-export function isCompoundFilter(filter: FilterClause): boolean {
+export function isCompoundFilter(filter: any): boolean {
   return Array.isArray(filter) && (filter[0] === "and" || filter[0] === "or");
 }
 

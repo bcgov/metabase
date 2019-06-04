@@ -140,11 +140,12 @@ const Query = {
     }
 
     // filters
-    const filters = Query.getFilters(query).filter(filter =>
-      _.all(filter, a => a != null),
-    );
-    if (filters.length > 0) {
-      query.filter = ["and", ...filters];
+    let filters = Query.getFilterClause(query);
+    if (filters && Array.isArray(filters)) {
+      filters = filters.filter(filter => _.all(filter, a => a != null));
+    }
+    if (!Array.isArray(filters) || filters.length > 0) {
+      query.filter = filters;
     } else {
       delete query.filter;
     }

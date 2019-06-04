@@ -72,14 +72,31 @@ export const getBreakoutFields = (query: SQ, tableMetadata: TableMetadata) =>
 // FILTER
 
 export const getFilters = (query: SQ) => F.getFilters(query.filter);
+export const getFilterClause = (query: SQ) => query.filter;
+
 export const addFilter = (query: SQ, filter: Filter) =>
   setFilterClause(query, F.addFilter(query.filter, filter));
-export const updateFilter = (query: SQ, index: number, filter: Filter) =>
+
+export const updateFilter = (query: SQ, index: number[], filter: Filter) =>
   setFilterClause(query, F.updateFilter(query.filter, index, filter));
-export const removeFilter = (query: SQ, index: number) =>
+export const removeFilter = (query: SQ, index: number[]) =>
   setFilterClause(query, F.removeFilter(query.filter, index));
 export const clearFilters = (query: SQ) =>
   setFilterClause(query, F.clearFilters(query.filter));
+
+export const toggleCompoundFilterOperator = (
+  query: SQ,
+  operatorIndex: number,
+  nestedClauseIndex: number[],
+) =>
+  setFilterClause(
+    query,
+    F.toggleCompoundFilterOperator(
+      query.filter,
+      operatorIndex,
+      nestedClauseIndex,
+    ),
+  );
 
 export const canAddFilter = (query: SQ) => F.canAddFilter(query.filter);
 

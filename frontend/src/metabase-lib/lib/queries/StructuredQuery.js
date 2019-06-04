@@ -488,6 +488,10 @@ export default class StructuredQuery extends AtomicQuery {
     return Q.getFilters(this.query());
   }
 
+  filterClause(): ?Filter {
+    return Q.getFilterClause(this.query());
+  }
+
   /**
    * @returns @type {DimensionOptions} that can be used in filters.
    */
@@ -539,14 +543,14 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns {StructuredQuery} new query with the MBQL @type {Filter} updated at the provided index.
    */
-  updateFilter(index: number, filter: Filter) {
+  updateFilter(index: number[], filter: Filter) {
     return this._updateQuery(Q.updateFilter, arguments);
   }
 
   /**
    * @returns {StructuredQuery} new query with the filter at the provided index removed.
    */
-  removeFilter(index: number) {
+  removeFilter(index: number[]) {
     return this._updateQuery(Q.removeFilter, arguments);
   }
 
@@ -555,6 +559,13 @@ export default class StructuredQuery extends AtomicQuery {
    */
   clearFilters() {
     return this._updateQuery(Q.clearFilters, arguments);
+  }
+
+  toggleCompoundFilterOperator(
+    operatorIndex: number,
+    nestedClauseIndex: number[],
+  ) {
+    return this._updateQuery(Q.toggleCompoundFilterOperator, arguments);
   }
 
   // SORTS
