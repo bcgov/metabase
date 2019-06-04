@@ -53,7 +53,7 @@ import Table from "metabase-lib/lib/metadata/Table";
       name: "",
       description: "",
       table_id: null,
-      definition: { filter: [] },
+      definition: { filter: null },
       revision_message: null,
     },
   },

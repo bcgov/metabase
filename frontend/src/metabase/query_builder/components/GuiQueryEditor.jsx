@@ -130,9 +130,9 @@ export default class GuiQueryEditor extends Component {
 
     if (query.isEditable()) {
       enabled = true;
-
+      // REF: query is used here
       const filter = query.filterClause();
-      if (filter && filter.length > 0) {
+      if (filter) {
         filterList = (
           <FilterWidgetList
             query={query}
