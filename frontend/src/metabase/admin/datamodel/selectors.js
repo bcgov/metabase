@@ -28,7 +28,7 @@ export const segmentEditSelectors = createSelector(
   (segments, id, tableId, tableMetadata) => ({
     segment:
       id == null
-        ? { id: null, table_id: tableId, definition: { filter: [] } }
+        ? { id: null, table_id: tableId, definition: { filter: null } }
         : segments[id],
     tableMetadata,
   }),

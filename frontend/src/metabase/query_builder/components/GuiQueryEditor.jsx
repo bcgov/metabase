@@ -132,7 +132,7 @@ export default class GuiQueryEditor extends Component {
       enabled = true;
       // REF: query is used here
       let filter = query.filterClause();
-      if (filter && filter.length > 0) {
+      if (filter) {
         filterList = (
           <FilterWidgetList
             query={query}
