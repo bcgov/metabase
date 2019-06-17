@@ -48,8 +48,7 @@ export default class Column extends Component {
   onVisibilityChange = ({ id: visibility_type }) =>
     this.updateField({ visibility_type });
 
-  onPositionChange = value =>
-    this.updateProperty("position", value);
+  onPositionChange = value => this.updateProperty("position", value);
 
   render() {
     const { field, idfields } = this.props;
@@ -82,7 +81,7 @@ export default class Column extends Component {
                     idfields={idfields}
                   />
                 </div>
-                <div style={{flex:'0.2'}} className="bordered rounded">
+                <div style={{ flex: "0.2" }} className="bordered rounded">
                   <NumericInput
                     className="AdminInput TableEditor-field-position text-bold"
                     value={this.props.field.position.toString()}
