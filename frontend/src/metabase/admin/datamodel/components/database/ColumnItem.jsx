@@ -48,7 +48,7 @@ export default class Column extends Component {
   onVisibilityChange = ({ id: visibility_type }) =>
     this.updateField({ visibility_type });
 
-  onPositionChange = value => this.updateProperty("position", value);
+  onPositionChange = position => this.updateField({ position });
 
   render() {
     const { field, idfields } = this.props;
