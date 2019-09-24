@@ -4,6 +4,7 @@ import { Link, withRouter } from "react-router";
 
 import InputBlurChange from "metabase/components/InputBlurChange";
 import Select, { Option } from "metabase/components/Select";
+import NumericInput from "metabase/components/NumericInput";
 import Icon from "metabase/components/Icon";
 import { t } from "ttag";
 import * as MetabaseCore from "metabase/lib/core";
@@ -47,6 +48,8 @@ export default class Column extends Component {
   onVisibilityChange = ({ id: visibility_type }) =>
     this.updateField({ visibility_type });
 
+  onPositionChange = position => this.updateField({ position });
+
   render() {
     const { field, idfields } = this.props;
 
@@ -76,6 +79,13 @@ export default class Column extends Component {
                     field={field}
                     updateField={this.updateField}
                     idfields={idfields}
+                  />
+                </div>
+                <div style={{ flex: "0.2" }} className="bordered rounded">
+                  <NumericInput
+                    className="AdminInput TableEditor-field-position text-bold"
+                    value={this.props.field.position.toString()}
+                    onChange={this.onPositionChange}
                   />
                 </div>
               </div>
